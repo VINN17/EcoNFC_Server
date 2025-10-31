@@ -3,7 +3,7 @@ const CONFIG = {
     mqtt: {
         broker: 'broker.hivemq.com',
         port: 8000, // WebSocket port
-        protocol: 'ws',
+        protocol: 'wss',
         username: '',
         password: '',
         reconnectPeriod: 5000
@@ -1253,4 +1253,5 @@ document.addEventListener('DOMContentLoaded', () => {
 window.ui = ui;
 window.deviceManager = deviceManager;
 window.notificationManager = notificationManager;
+
 window.state = state;
