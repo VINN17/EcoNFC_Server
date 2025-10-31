@@ -602,6 +602,10 @@ const ui = {
             setTimeout(() => mapManager.initMainMap(), 100);
         }
 
+        if (page === 'analytics') {
+            ui.populateAnalyticsDeviceSelector();
+        }
+
         ui.updateDashboard();
         ui.updateDevicesTable();
     },
@@ -705,47 +709,38 @@ const ui = {
             return;
         }
 
-        container.innerHTML = state.devices.map(device => {
-            const status = utils.getDeviceStatus(device.lastUpdate);
+        container.innerHTML = state.devices.slice(0, 6).map(device => {
             const aqi = device.lastData?.aqi || 0;
+            const temp = device.lastData?.temp || '--';
+            const humidity = device.lastData?.humidity || '--';
+            const status = utils.getDeviceStatus(device.lastUpdate);
             const aqiStatus = utils.getAqiStatus(aqi);
 
             return `
-                <div class="device-card">
+                <div class="device-card" onclick="ui.showDeviceDetail(state.devices.find(d => d.deviceId === '${device.deviceId}'))">
                     <div class="device-card-header">
-                        <div>
+                        <div class="device-info">
                             <h3>${device.deviceName}</h3>
                             <p><i class="fas fa-map-marker-alt"></i> ${device.locationName}</p>
                         </div>
                         <span class="device-status ${status.class}">${status.text}</span>
                     </div>
-                    <div class="device-card-body">
-                        <div class="device-reading">
-                            <div class="reading-icon ${aqiStatus.class}">
-                                <i class="fas fa-wind"></i>
-                            </div>
-                            <div class="reading-info">
-                                <h4>${aqi.toFixed(1)}</h4>
-                                <p>AQI - ${aqiStatus.text}</p>
-                            </div>
+                    <div class="device-readings">
+                        <div class="reading">
+                            <div class="reading-label">AQI</div>
+                            <div class="reading-value ${aqiStatus.class}">${aqi.toFixed(1)}</div>
                         </div>
-                        <div class="device-reading">
-                            <div class="reading-icon" style="background: #F59E0B;">
-                                <i class="fas fa-thermometer-half"></i>
-                            </div>
-                            <div class="reading-info">
-                                <h4>${device.lastData?.temp || '--'}°C</h4>
-                                <p>Temperature</p>
-                            </div>
+                        <div class="reading">
+                            <div class="reading-label">Temp</div>
+                            <div class="reading-value">${temp}°C</div>
                         </div>
-                        <div class="device-reading">
-                            <div class="reading-icon" style="background: #3B82F6;">
-                                <i class="fas fa-tint"></i>
-                            </div>
-                            <div class="reading-info">
-                                <h4>${device.lastData?.humidity || '--'}%</h4>
-                                <p>Humidity</p>
-                            </div>
+                        <div class="reading">
+                            <div class="reading-label">Humidity</div>
+                            <div class="reading-value">${humidity}%</div>
+                        </div>
+                        <div class="reading">
+                            <div class="reading-label">Status</div>
+                            <div class="reading-value" style="font-size: 1rem;">${aqiStatus.text}</div>
                         </div>
                     </div>
                 </div>
@@ -843,6 +838,17 @@ const ui = {
         if (badge) {
             badge.textContent = state.alerts.length;
         }
+    },
+
+    // Populate analytics device selector
+    populateAnalyticsDeviceSelector: () => {
+        const select = document.getElementById('analyticsDevice');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">Select Device</option>' +
+            state.devices.map(device => `
+                <option value="${device.deviceId}">${device.deviceName}</option>
+            `).join('');
     }
 };
 
@@ -896,6 +902,7 @@ const deviceManager = {
         // Update UI
         ui.updateDashboard();
         ui.updateDevicesTable();
+        ui.populateAnalyticsDeviceSelector();
         mapManager.updateMarkers();
         ui.closeModal('addDeviceModal');
 
@@ -945,6 +952,7 @@ const deviceManager = {
         // Update UI
         ui.updateDashboard();
         ui.updateDevicesTable();
+        ui.populateAnalyticsDeviceSelector();
         mapManager.updateMarkers();
         ui.closeModal('addDeviceModal');
         
@@ -969,6 +977,7 @@ const deviceManager = {
 
         ui.updateDashboard();
         ui.updateDevicesTable();
+        ui.populateAnalyticsDeviceSelector();
         mapManager.updateMarkers();
 
         utils.showToast('Device berhasil dihapus', 'success');
