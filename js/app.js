@@ -2,7 +2,7 @@
 const CONFIG = {
     mqtt: {
         broker: 'broker.hivemq.com',
-        port: 8000, // WebSocket port
+        port: 8884, // WebSocket port
         protocol: 'wss',
         username: '',
         password: '',
@@ -1255,3 +1255,4 @@ window.deviceManager = deviceManager;
 window.notificationManager = notificationManager;
 
 window.state = state;
+
