@@ -939,14 +939,6 @@ const mapManager = {
     }
 };
 
-// ==================== CHART MANAGEMENT ====================
-const chartManager = {
-    // Initialize charts (placeholder - full implementation would go here)
-    init: () => {
-        console.log('Charts initialized');
-    }
-};
-
 // ==================== UI MANAGEMENT ====================
 const ui = {
     // Initialize UI
